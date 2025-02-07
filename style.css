@@ -10,7 +10,28 @@ h1 {
     margin-bottom: 20px;
 }
 
-#board {
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.game-container {
+    display: none;
+}
+
+.game-container.active {
+    display: block;
+}
+
+#snake-canvas {
+    background-color: #000;
+    display: block;
+    margin: 0 auto;
+}
+
+#minesweeper-board {
     display: grid;
     grid-template-columns: repeat(10, 30px);
     grid-template-rows: repeat(10, 30px);
@@ -44,17 +65,4 @@ h1 {
 
 .cell.flagged {
     background-color: #ffcc00;
-}
-
-#restart {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-#message {
-    margin-top: 20px;
-    font-size: 18px;
-    color: #333;
 }
