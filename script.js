@@ -30,6 +30,7 @@ document.getElementById('back-to-menu-minesweeper').addEventListener('click', ()
 });
 
 // Змейка
+// Змейка
 function startSnake() {
     const canvas = document.getElementById('snake-canvas');
     const ctx = canvas.getContext('2d');
@@ -38,58 +39,87 @@ function startSnake() {
     canvas.width = gridSize * tileCount;
     canvas.height = gridSize * tileCount;
 
-    let snake = [{ x: 10, y: 10 }];
-    let food = { x: 5, y: 5 };
-    let direction = { x: 0, y: 0 };
+    let snake = [{ x: 10, y: 10 }]; // Начальная позиция змейки
+    let food = { x: 5, y: 5 }; // Начальная позиция еды
+    let direction = { x: 0, y: 0 }; // Направление движения
     let gameOver = false;
 
+    // Основной игровой цикл
     function gameLoop() {
-        if (gameOver) return;
-
-        update();
-        draw();
-        setTimeout(gameLoop, 100);
-    }
-
-    function update() {
-        const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-
-        // Проверка на столкновение с границами или собой
-        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-            gameOver = true;
+        if (gameOver) {
             alert('Игра окончена!');
             return;
         }
 
+        update(); // Обновление состояния игры
+        draw();   // Отрисовка игры
+        setTimeout(gameLoop, 100); // Запуск следующего кадра
+    }
+
+    // Обновление состояния игры
+    function update() {
+        // Новая голова змейки
+        const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+        // Проверка на столкновение с границами
+        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+            gameOver = true;
+            return;
+        }
+
+        // Проверка на столкновение с собой
+        if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+            gameOver = true;
+            return;
+        }
+
+        // Добавляем новую голову
         snake.unshift(head);
 
         // Проверка на съедание еды
         if (head.x === food.x && head.y === food.y) {
-            food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+            // Генерируем новую еду
+            food = {
+                x: Math.floor(Math.random() * tileCount),
+                y: Math.floor(Math.random() * tileCount)
+            };
         } else {
+            // Удаляем хвост, если еда не съедена
             snake.pop();
         }
     }
 
+    // Отрисовка игры
     function draw() {
+        // Очистка холста
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Рисуем змейку
         ctx.fillStyle = 'lime';
-        snake.forEach(segment => ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize));
+        snake.forEach(segment => {
+            ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+        });
 
         // Рисуем еду
         ctx.fillStyle = 'red';
         ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
     }
 
-    // Управление
+    // Управление с клавиатуры
     document.addEventListener('keydown', (e) => {
         switch (e.key) {
-            case 'ArrowUp': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
-            case 'ArrowDown': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
-            case 'ArrowLeft': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
-            case 'ArrowRight': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
+            case 'ArrowUp':
+                if (direction.y === 0) direction = { x: 0, y: -1 }; // Вверх
+                break;
+            case 'ArrowDown':
+                if (direction.y === 0) direction = { x: 0, y: 1 }; // Вниз
+                break;
+            case 'ArrowLeft':
+                if (direction.x === 0) direction = { x: -1, y: 0 }; // Влево
+                break;
+            case 'ArrowRight':
+                if (direction.x === 0) direction = { x: 1, y: 0 }; // Вправо
+                break;
         }
     });
 
@@ -110,14 +140,17 @@ function startSnake() {
         const dy = touchEndY - touchStartY;
 
         if (Math.abs(dx) > Math.abs(dy)) {
+            // Горизонтальный свайп
             if (dx > 0 && direction.x === 0) direction = { x: 1, y: 0 }; // Вправо
             else if (dx < 0 && direction.x === 0) direction = { x: -1, y: 0 }; // Влево
         } else {
+            // Вертикальный свайп
             if (dy > 0 && direction.y === 0) direction = { x: 0, y: 1 }; // Вниз
             else if (dy < 0 && direction.y === 0) direction = { x: 0, y: -1 }; // Вверх
         }
     });
 
+    // Запуск игры
     gameLoop();
 }
 
