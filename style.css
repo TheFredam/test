@@ -29,10 +29,11 @@ button {
     display: block;
 }
 
-#snake-canvas {
-    background-color: #000;
+#platformer-canvas {
+    background-color: #87CEEB;
     display: block;
     margin: 0 auto;
+    border: 2px solid #000;
 }
 
 #minesweeper-board {
