@@ -12,23 +12,24 @@ h1 {
 
 #board {
     display: grid;
-    grid-template-columns: repeat(5, 50px);
-    grid-template-rows: repeat(5, 50px);
-    gap: 5px;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 2px;
     justify-content: center;
     margin: 20px auto;
 }
 
 .cell {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     background-color: #ccc;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 14px;
     border: 1px solid #999;
+    user-select: none;
 }
 
 .cell.revealed {
@@ -41,9 +42,19 @@ h1 {
     color: white;
 }
 
+.cell.flagged {
+    background-color: #ffcc00;
+}
+
 #restart {
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
 }
