@@ -1,24 +1,32 @@
 // Переключение между играми
 document.getElementById('snake-btn').addEventListener('click', () => {
+    document.getElementById('menu').classList.remove('active');
     document.getElementById('menu').classList.add('hidden');
+    document.getElementById('snake-game').classList.remove('hidden');
     document.getElementById('snake-game').classList.add('active');
     startSnake();
 });
 
 document.getElementById('minesweeper-btn').addEventListener('click', () => {
+    document.getElementById('menu').classList.remove('active');
     document.getElementById('menu').classList.add('hidden');
+    document.getElementById('minesweeper-game').classList.remove('hidden');
     document.getElementById('minesweeper-game').classList.add('active');
     startMinesweeper();
 });
 
 document.getElementById('back-to-menu-snake').addEventListener('click', () => {
     document.getElementById('snake-game').classList.remove('active');
+    document.getElementById('snake-game').classList.add('hidden');
     document.getElementById('menu').classList.remove('hidden');
+    document.getElementById('menu').classList.add('active');
 });
 
 document.getElementById('back-to-menu-minesweeper').addEventListener('click', () => {
     document.getElementById('minesweeper-game').classList.remove('active');
+    document.getElementById('minesweeper-game').classList.add('hidden');
     document.getElementById('menu').classList.remove('hidden');
+    document.getElementById('menu').classList.add('active');
 });
 
 // Змейка
@@ -113,7 +121,7 @@ function startSnake() {
     gameLoop();
 }
 
-// Сапер (код из предыдущего примера)
+// Сапер
 function startMinesweeper() {
     const BOARD_SIZE = 10;
     const MINES_COUNT = 15;
@@ -137,8 +145,8 @@ function startMinesweeper() {
                 board[x][y] = -1;
                 minesPlaced++;
 
-                for (let i = Math.max(0, x - 1); i <= Math.min(BOARD_SIZE - 1, x + 1); i++) {
-                    for (let j = Math.max(0, y - 1); j <= Math.min(BOARD_SIZE - 1, y + 1); j++) {
+                for (let i = Math.max(0, x - 1); i <= Math.min(BOARD_SIZE - 1, x + 2); i++) {
+                    for (let j = Math.max(0, y - 1); j <= Math.min(BOARD_SIZE - 1, y + 2); j++) {
                         if (board[i][j] !== -1) {
                             board[i][j]++;
                         }
