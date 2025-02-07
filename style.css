@@ -17,6 +17,10 @@ button {
     margin: 5px;
 }
 
+.hidden {
+    display: none;
+}
+
 .game-container {
     display: none;
 }
