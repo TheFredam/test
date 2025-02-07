@@ -3,14 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сапер</title>
+    <title>Мини-игры</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Сапер</h1>
-    <div id="board"></div>
-    <button id="restart">Начать заново</button>
-    <p id="message"></p>
+    <div id="menu">
+        <h1>Выберите игру</h1>
+        <button id="snake-btn">Змейка</button>
+        <button id="minesweeper-btn">Сапер</button>
+    </div>
+
+    <div id="snake-game" class="game-container hidden">
+        <h1>Змейка</h1>
+        <canvas id="snake-canvas"></canvas>
+        <button id="back-to-menu-snake">В меню</button>
+    </div>
+
+    <div id="minesweeper-game" class="game-container hidden">
+        <h1>Сапер</h1>
+        <div id="minesweeper-board"></div>
+        <button id="back-to-menu-minesweeper">В меню</button>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
