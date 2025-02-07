@@ -1,10 +1,10 @@
 // Переключение между играми
-document.getElementById('snake-btn').addEventListener('click', () => {
+document.getElementById('platformer-btn').addEventListener('click', () => {
     document.getElementById('menu').classList.remove('active');
     document.getElementById('menu').classList.add('hidden');
-    document.getElementById('snake-game').classList.remove('hidden');
-    document.getElementById('snake-game').classList.add('active');
-    startSnake();
+    document.getElementById('platformer-game').classList.remove('hidden');
+    document.getElementById('platformer-game').classList.add('active');
+    startPlatformer();
 });
 
 document.getElementById('minesweeper-btn').addEventListener('click', () => {
@@ -15,9 +15,9 @@ document.getElementById('minesweeper-btn').addEventListener('click', () => {
     startMinesweeper();
 });
 
-document.getElementById('back-to-menu-snake').addEventListener('click', () => {
-    document.getElementById('snake-game').classList.remove('active');
-    document.getElementById('snake-game').classList.add('hidden');
+document.getElementById('back-to-menu-platformer').addEventListener('click', () => {
+    document.getElementById('platformer-game').classList.remove('active');
+    document.getElementById('platformer-game').classList.add('hidden');
     document.getElementById('menu').classList.remove('hidden');
     document.getElementById('menu').classList.add('active');
 });
@@ -29,132 +29,115 @@ document.getElementById('back-to-menu-minesweeper').addEventListener('click', ()
     document.getElementById('menu').classList.add('active');
 });
 
-// Змейка
-// Змейка
-function startSnake() {
-    const canvas = document.getElementById('snake-canvas');
+// Платформер
+function startPlatformer() {
+    const canvas = document.getElementById('platformer-canvas');
     const ctx = canvas.getContext('2d');
-    const gridSize = 20;
-    const tileCount = 20;
-    canvas.width = gridSize * tileCount;
-    canvas.height = gridSize * tileCount;
+    canvas.width = 400;
+    canvas.height = 600;
 
-    let snake = [{ x: 10, y: 10 }]; // Начальная позиция змейки
-    let food = { x: 5, y: 5 }; // Начальная позиция еды
-    let direction = { x: 0, y: 0 }; // Направление движения
+    const player = {
+        x: 50,
+        y: 500,
+        width: 40,
+        height: 40,
+        color: 'green',
+        velocityY: 0,
+        gravity: 0.5,
+        jumpStrength: -10,
+        isJumping: false
+    };
+
+    const platforms = [
+        { x: 0, y: 550, width: 400, height: 20, color: 'brown' },
+        { x: 100, y: 450, width: 100, height: 20, color: 'brown' },
+        { x: 250, y: 350, width: 100, height: 20, color: 'brown' },
+        { x: 50, y: 250, width: 100, height: 20, color: 'brown' }
+    ];
+
+    let score = 0;
     let gameOver = false;
 
-    // Основной игровой цикл
-    function gameLoop() {
-        if (gameOver) {
-            alert('Игра окончена!');
-            return;
-        }
-
-        update(); // Обновление состояния игры
-        draw();   // Отрисовка игры
-        setTimeout(gameLoop, 100); // Запуск следующего кадра
+    function drawPlayer() {
+        ctx.fillStyle = player.color;
+        ctx.fillRect(player.x, player.y, player.width, player.height);
     }
 
-    // Обновление состояния игры
-    function update() {
-        // Новая голова змейки
-        const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-
-        // Проверка на столкновение с границами
-        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-            gameOver = true;
-            return;
-        }
-
-        // Проверка на столкновение с собой
-        if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-            gameOver = true;
-            return;
-        }
-
-        // Добавляем новую голову
-        snake.unshift(head);
-
-        // Проверка на съедание еды
-        if (head.x === food.x && head.y === food.y) {
-            // Генерируем новую еду
-            food = {
-                x: Math.floor(Math.random() * tileCount),
-                y: Math.floor(Math.random() * tileCount)
-            };
-        } else {
-            // Удаляем хвост, если еда не съедена
-            snake.pop();
-        }
+    function drawPlatforms() {
+        platforms.forEach(platform => {
+            ctx.fillStyle = platform.color;
+            ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+        });
     }
 
-    // Отрисовка игры
-    function draw() {
-        // Очистка холста
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function updatePlayer() {
+        player.velocityY += player.gravity;
+        player.y += player.velocityY;
 
-        // Рисуем змейку
-        ctx.fillStyle = 'lime';
-        snake.forEach(segment => {
-            ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+        // Проверка столкновений с платформами
+        platforms.forEach(platform => {
+            if (
+                player.x < platform.x + platform.width &&
+                player.x + player.width > platform.x &&
+                player.y + player.height > platform.y &&
+                player.y < platform.y + platform.height &&
+                player.velocityY > 0
+            ) {
+                player.y = platform.y - player.height;
+                player.velocityY = 0;
+                player.isJumping = false;
+            }
         });
 
-        // Рисуем еду
-        ctx.fillStyle = 'red';
-        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+        // Проверка на выход за пределы экрана
+        if (player.y > canvas.height) {
+            gameOver = true;
+        }
     }
 
-    // Управление с клавиатуры
+    function drawScore() {
+        document.getElementById('score').textContent = score;
+    }
+
+    function gameLoop() {
+        if (gameOver) {
+            alert('Игра окончена! Ваш счет: ' + score);
+            return;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPlayer();
+        drawPlatforms();
+        updatePlayer();
+        drawScore();
+
+        // Увеличиваем счет, если игрок поднимается
+        if (player.velocityY < 0) {
+            score += 1;
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Управление
     document.addEventListener('keydown', (e) => {
-        switch (e.key) {
-            case 'ArrowUp':
-                if (direction.y === 0) direction = { x: 0, y: -1 }; // Вверх
-                break;
-            case 'ArrowDown':
-                if (direction.y === 0) direction = { x: 0, y: 1 }; // Вниз
-                break;
-            case 'ArrowLeft':
-                if (direction.x === 0) direction = { x: -1, y: 0 }; // Влево
-                break;
-            case 'ArrowRight':
-                if (direction.x === 0) direction = { x: 1, y: 0 }; // Вправо
-                break;
+        if (e.code === 'Space' && !player.isJumping) {
+            player.velocityY = player.jumpStrength;
+            player.isJumping = true;
         }
     });
 
-    // Управление свайпами
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    canvas.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        const touchEndX = e.touches[0].clientX;
-        const touchEndY = e.touches[0].clientY;
-        const dx = touchEndX - touchStartX;
-        const dy = touchEndY - touchStartY;
-
-        if (Math.abs(dx) > Math.abs(dy)) {
-            // Горизонтальный свайп
-            if (dx > 0 && direction.x === 0) direction = { x: 1, y: 0 }; // Вправо
-            else if (dx < 0 && direction.x === 0) direction = { x: -1, y: 0 }; // Влево
-        } else {
-            // Вертикальный свайп
-            if (dy > 0 && direction.y === 0) direction = { x: 0, y: 1 }; // Вниз
-            else if (dy < 0 && direction.y === 0) direction = { x: 0, y: -1 }; // Вверх
+    canvas.addEventListener('touchstart', () => {
+        if (!player.isJumping) {
+            player.velocityY = player.jumpStrength;
+            player.isJumping = true;
         }
     });
 
-    // Запуск игры
     gameLoop();
 }
 
-// Сапер
+// Сапер (код из предыдущего примера)
 function startMinesweeper() {
     const BOARD_SIZE = 10;
     const MINES_COUNT = 15;
